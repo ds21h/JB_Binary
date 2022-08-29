@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/mnuUndo"
+        android:onClick="hUndo"
+        android:title="@string/mnu_undo" />
+    <item
+        android:id="@+id/mnuNew"
+        android:onClick="hNew"
+        android:title="@string/mnu_new" />
+    <item
+        android:id="@+id/mnuSetup"
+        android:title="@string/mnu_setup">
+        <menu>
+            <item
+                android:id="@+id/mnuSetupStart"
+                android:onClick="hSetupStart"
+                android:title="@string/mnu_setup_start" />
+            <item
+                android:id="@+id/mnuSetupFinish"
+                android:onClick="hSetupFinish"
+                android:title="@string/mnu_setup_finish" />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/mnuReset"
+        android:onClick="hReset"
+        android:title="@string/mnu_reset" />
+    <item
+        android:id="@+id/mnuFields"
+        android:title="@string/mnu_fields" >
+        <menu>
+            <item
+                android:onClick="hFieldCopy"
+                android:title="@string/mnu_field_copy" />
+            <item
+                android:id="@+id/mnuSwitch"
+                android:onClick="hFieldSwitch"
+                android:title="@string/mnu_field_switch" />
+            <item
+                android:id="@+id/mnuDelete"
+                android:onClick="hFieldDelete"
+                android:title="@string/mnu_field_delete" />
+        </menu>
+    </item>
+</menu>

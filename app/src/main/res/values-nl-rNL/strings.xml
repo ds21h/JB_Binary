@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Binary</string>
+    <string name="mnu_setup">Opzetten</string>
+    <string name="mnu_setup_start">Start</string>
+    <string name="mnu_setup_finish">Einde</string>
+    <string name="mnu_reset">Terugzetten</string>
+    <string name="mnu_new">Nieuw</string>
+    <string name="mnu_fields">Speelvelden</string>
+    <string name="mnu_field_copy">Kopieer</string>
+    <string name="mnu_field_switch">Wissel</string>
+    <string name="mnu_field_delete">Verwijder</string>
+    <string name="mnu_undo">Undo</string>
+    <string name="head_game_params">Spel Parameters</string>
+    <string name="head_setup">Opzetten</string>
+    <string name="head_level_very_easy">Erg makkelijk</string>
+    <string name="head_level_easy">Makkelijk</string>
+    <string name="head_level_medium">Gemiddeld</string>
+    <string name="head_level_hard">Moeilijk</string>
+    <string name="head_level_very_hard">Erg moeilijk</string>
+    <string name="lb_rows">Rijen:</string>
+    <string name="lb_columns">Kolommen:</string>
+    <string name="lb_difficulty">Moeilijkheid</string>
+    <string name="lb_ok">OK</string>
+    <string name="msg_solved">Puzzel opgelost!</string>
+    <string name="msg_adjusted">Waarde aangepast!</string>
+</resources>

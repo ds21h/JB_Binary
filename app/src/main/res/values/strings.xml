@@ -1,0 +1,26 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Binary</string>
+    <string name="mnu_setup">Setup</string>
+    <string name="mnu_setup_start">Start</string>
+    <string name="mnu_setup_finish">Finish</string>
+    <string name="mnu_reset">Reset Game</string>
+    <string name="mnu_new">New</string>
+    <string name="mnu_fields">PlayFields</string>
+    <string name="mnu_field_copy">Copy</string>
+    <string name="mnu_field_switch">Switch</string>
+    <string name="mnu_field_delete">Delete</string>
+    <string name="mnu_undo">Undo</string>
+    <string name="head_game_params">Game parameters</string>
+    <string name="head_setup">Setup</string>
+    <string name="head_level_very_easy">Very Easy</string>
+    <string name="head_level_easy">Easy</string>
+    <string name="head_level_medium">Medium</string>
+    <string name="head_level_hard">Hard</string>
+    <string name="head_level_very_hard">Very Hard</string>
+    <string name="lb_rows">Rows:</string>
+    <string name="lb_columns">Columns:</string>
+    <string name="lb_difficulty">Difficulty:</string>
+    <string name="lb_ok">OK</string>
+    <string name="msg_solved">Puzzle solved!</string>
+    <string name="msg_adjusted">Value(s) adjusted!</string>
+</resources>
