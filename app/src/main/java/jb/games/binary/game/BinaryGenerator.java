@@ -19,12 +19,23 @@ class BinaryGenerator {
     private ValueCell[] mCells;
     private Random mRandom;
     private volatile boolean mStop;
+    private int[] cMinFraction = {50, 40, 30, 20, 10};
+    private int mMinCells;
 
     BinaryGenerator(int pRows, int pColumns, int pDifficulty){
         mRows = pRows;
         mColumns = pColumns;
-        mDifficulty = pDifficulty;
+        if (pDifficulty < 1){
+            mDifficulty = 1;
+        } else {
+            if (pDifficulty > 5){
+                mDifficulty = 5;
+            } else {
+                mDifficulty = pDifficulty;
+            }
+        }
         mNumberCells = mRows * mColumns;
+        mMinCells = (mNumberCells * cMinFraction[mDifficulty - 1])/100;
         mFreeCells = new ArrayList<>();
         mCells = new ValueCell[mNumberCells];
         mRandom = new Random();
@@ -91,7 +102,7 @@ class BinaryGenerator {
                 lResult = false;
                 break;
             }
-            if (lFreeCells.size() > 0){
+            if (lFreeCells.size() > mMinCells){
                 lRandom = mRandom.nextInt(lFreeCells.size());
                 lCellNr = lFreeCells.get(lRandom);
                 lFreeCells.remove(lRandom);
@@ -187,7 +198,7 @@ class BinaryGenerator {
             lCells[lCount] = pCells[lCellNr];
             lCellNr++;
         }
-        return GameFunctions.xCheckUnit(lCells);
+        return sCheckUnit(lCells);
     }
 
     private boolean sCheckColumn(int pColumn){
@@ -205,7 +216,7 @@ class BinaryGenerator {
             lCells[lCount] = pCells[lCellNr];
             lCellNr += mColumns;
         }
-        return GameFunctions.xCheckUnit(lCells);
+        return sCheckUnit(lCells);
     }
 
     private int sCountSolutions(){
@@ -251,5 +262,50 @@ class BinaryGenerator {
             }
         }
         return lSolutions;
+    }
+
+    private boolean sCheckUnit(ValueCell[] pCells){
+        int lCellNr;
+        ValueCell lCell;
+        int lValue = -1;
+        int lCount0 = 0;
+        int lCount1 = 0;
+        boolean lResult = true;
+        int lDups = 1;
+        int lMaxOcc;
+
+        lMaxOcc = pCells.length/2;
+        for (lCellNr = 0; lCellNr < pCells.length; lCellNr++){
+            lCell = pCells[lCellNr];
+            if (lCell.xValue() < 0){
+                lValue = -1;
+                lDups = 1;
+            } else {
+                if (lCell.xValue() == lValue){
+                    lDups++;
+                    if (lDups > 2){
+                        lResult = false;
+                        break;
+                    }
+                } else {
+                    lValue = lCell.xValue();
+                    lDups = 1;
+                }
+                if (lCell.xValue() == 0){
+                    lCount0++;
+                    if (lCount0 > lMaxOcc){
+                        lResult = false;
+                        break;
+                    }
+                } else {
+                    lCount1++;
+                    if (lCount1 > lMaxOcc){
+                        lResult = false;
+                        break;
+                    }
+                }
+            }
+        }
+        return lResult;
     }
 }

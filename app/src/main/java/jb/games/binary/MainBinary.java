@@ -58,7 +58,6 @@ public class MainBinary extends AppCompatActivity {
             if (pMessage.what == GenerateRunnable.cGenerateFinished){
                 sStartGame();
             }
-            mGenerate = null;
             return true;
         }
     });
@@ -318,20 +317,22 @@ public class MainBinary extends AppCompatActivity {
         Intent lInt;
         Bundle lBundle;
 
-            lBundle = new Bundle();
-            lBundle.putInt(SelectGameParams.cRows, mGame.xRows());
-            lBundle.putInt(SelectGameParams.cColumns, mGame.xColumns());
-            lBundle.putInt(SelectGameParams.cDifficulty, mGame.xDifficulty());
-            lInt = new Intent();
-            lInt.setClass(this, SelectGameParams.class);
-            lInt.putExtras(lBundle);
-            mStartSetup.launch(lInt);
+        mGame.xGenerateStop();
+        lBundle = new Bundle();
+        lBundle.putInt(SelectGameParams.cRows, mGame.xRows());
+        lBundle.putInt(SelectGameParams.cColumns, mGame.xColumns());
+        lBundle.putInt(SelectGameParams.cDifficulty, mGame.xDifficulty());
+        lInt = new Intent();
+        lInt.setClass(this, SelectGameParams.class);
+        lInt.putExtras(lBundle);
+        mStartSetup.launch(lInt);
     }
 
     public void hSetupStart(MenuItem pItem) {
         Intent lInt;
         Bundle lBundle;
 
+        mGame.xGenerateStop();
         lBundle = new Bundle();
         lBundle.putInt(SelectGameParams.cRows, mGame.xRows());
         lBundle.putInt(SelectGameParams.cColumns, mGame.xColumns());

@@ -38,7 +38,7 @@ public class BinaryView extends View {
 
     private BinaryGame mGame = null;
     private float mCellSize;
-    private float mButtonSize = 120;
+    private float mButtonSize = 180;
     private RectF[] mButton = new RectF[2];
     private boolean mEnabled = true;
     private boolean mButtonsEnabled = false;

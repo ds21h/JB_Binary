@@ -1,7 +1,7 @@
 package jb.games.binary.game;
 
 class BinaryGameBase {
-    private int mGameStatus;
+    private volatile int mGameStatus;
     public static final int cStatusNone = 0;
     public static final int cStatusSetup = 1;
     public static final int cStatusGenerate = 2;
@@ -14,7 +14,7 @@ class BinaryGameBase {
     private int mUsedTime;
     private int mDifficulty;
 
-    private BinaryGenerator mGenerator = null;
+    private volatile BinaryGenerator mGenerator = null;
 
     BinaryGameBase() {
         mGameStatus = cStatusNone;
@@ -247,7 +247,6 @@ class BinaryGameBase {
         mGenerator = new BinaryGenerator(pRows, pColums, pDifficulty);
         if (mGenerator.xGenerate()){
             mPlayField = new PlayField(mGenerator.xGetCells());
-            mGenerator = null;
             mUsedTime = 0;
             mGameStatus = cStatusPlay;
             lResult = true;
@@ -255,12 +254,16 @@ class BinaryGameBase {
             mGameStatus = cStatusNone;
             lResult = false;
         }
+        mGenerator = null;
         return lResult;
     }
 
     public void xGenerateStop(){
-        if (mGenerator != null){
-            mGenerator.xStop();
+        if (mGameStatus == cStatusGenerate){
+            if (mGenerator != null){
+                mGenerator.xStop();
+                mGameStatus = cStatusNone;
+            }
         }
     }
 }
