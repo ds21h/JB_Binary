@@ -8,13 +8,12 @@ class BinaryGameBase {
     public static final int cStatusPlay = 3;
     public static final int cStatusSolved = 4;
 
-    private int mRows;
-    private int mColumns;
-    private PlayField mPlayField;
-    private int mUsedTime;
-    private int mDifficulty;
-
-    private volatile BinaryGenerator mGenerator = null;
+    private volatile int mRows;
+    private volatile int mColumns;
+    private volatile PlayField mPlayField;
+    private volatile int mUsedTime;
+    private volatile int mDifficulty;
+    private volatile BinaryGenerator mGenerator;
 
     BinaryGameBase() {
         mGameStatus = cStatusNone;
@@ -23,15 +22,7 @@ class BinaryGameBase {
         mPlayField = new PlayField(mRows * mColumns);
         mUsedTime = 0;
         mDifficulty = 0;
-    }
-
-    BinaryGameBase(int pRows, int pColumns, int pDifficulty){
-        mGameStatus = cStatusNone;
-        mRows = pRows;
-        mColumns = pColumns;
-        mPlayField = new PlayField(mRows * mColumns);
-        mUsedTime = 0;
-        mDifficulty = pDifficulty;
+        mGenerator = null;
     }
 
     BinaryGameBase(BinaryGameBase pGame) {
@@ -41,6 +32,7 @@ class BinaryGameBase {
         mPlayField = new PlayField(pGame.mPlayField);
         mUsedTime = pGame.mUsedTime;
         mDifficulty = pGame.mDifficulty;
+        mGenerator = null;
     }
 
     void xInitGame(PlayField pField, int pGameRows, int pGameColumns, int pStatus, int pDifficulty, int pUsedTime) {
@@ -70,7 +62,11 @@ class BinaryGameBase {
     }
 
     public void xAddUsedTime(int pCorr) {
-        mUsedTime += pCorr;
+        int lUsedTime;
+
+        lUsedTime = mUsedTime;
+        lUsedTime += pCorr;
+        mUsedTime = lUsedTime;
     }
 
     public void xResetUsedTime() {
@@ -237,33 +233,16 @@ class BinaryGameBase {
         return lResult;
     }
 
-    boolean xGenerate(int pRows, int pColums, int pDifficulty){
-        boolean lResult;
-
-        mGameStatus = cStatusGenerate;
-        mRows = pRows;
-        mColumns = pColums;
-        mDifficulty = pDifficulty;
-        mGenerator = new BinaryGenerator(pRows, pColums, pDifficulty);
-        if (mGenerator.xGenerate()){
-            mPlayField = new PlayField(mGenerator.xGetCells());
-            mUsedTime = 0;
-            mGameStatus = cStatusPlay;
-            lResult = true;
-        } else {
-            mGameStatus = cStatusNone;
-            lResult = false;
-        }
-        mGenerator = null;
-        return lResult;
+    void xNewGame(BinaryGenerator pGenerator){
+        mRows = pGenerator.xRows();
+        mColumns = pGenerator.xColumns();
+        mDifficulty = pGenerator.xDifficulty();
+        mPlayField = new PlayField(pGenerator.xGetCells());
+        mUsedTime = 0;
+        mGameStatus = cStatusPlay;
     }
 
-    public void xGenerateStop(){
-        if (mGameStatus == cStatusGenerate){
-            if (mGenerator != null){
-                mGenerator.xStop();
-                mGameStatus = cStatusNone;
-            }
-        }
+    public void xStartGenerate(){
+        mGameStatus = cStatusGenerate;
     }
 }

@@ -21,14 +21,14 @@ class Data extends SQLiteOpenHelper {
     private static final int cDBVersion = 1;
     private static String mExternalFilesDir;
 
-    private SQLiteDatabase mDB;
+    private final SQLiteDatabase mDB;
 
     static Data getInstance(Context pContext) {
         Context lContext;
         File lExternalFilesDir;
         /*
          * use the application context as suggested by CommonsWare.
-         * this will ensure that you dont accidentally leak an Activitys
+         * this will ensure that you don't accidentally leak an Activities
          * context (see this article for more information:
          * http://developer.android.com/resources/articles/avoiding-memory-leaks.html)
          *
@@ -285,7 +285,6 @@ class Data extends SQLiteOpenHelper {
             lFieldId = lCursor.getInt(0);
             lSel = lCursor.getInt(1);
             lValueCells = sGetCells(lFieldId, pSize);
-            //noinspection RedundantConditionalExpression
             lField = new PlayField(lFieldId, lValueCells, lSel);
             lFields.add(lField);
         }
@@ -321,7 +320,6 @@ class Data extends SQLiteOpenHelper {
             lValue = lCursor.getInt(1);
             lFixed = lCursor.getInt(2);
             lConflict = lCursor.getInt(3);
-            //noinspection RedundantConditionalExpression
             lValueCell = new ValueCell(lValue, (lFixed == 0) ? false : true, (lConflict == 0) ? false : true);
             lValueCells[lCellNumber] = lValueCell;
         }

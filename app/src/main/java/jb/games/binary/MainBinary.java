@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import jb.games.binary.databinding.ActivityMainBinaryBinding;
 import jb.games.binary.game.BinaryGame;
+import jb.games.binary.game.BinaryGenerator;
 
 import org.threeten.bp.Instant;
 
@@ -36,7 +37,8 @@ public class MainBinary extends AppCompatActivity {
     private Bundle mGameParams = null;
     private long mStartTime;
     private String mHeader;
-    private GenerateRunnable mGenerate;
+    private boolean mGenerateRunning;
+    private GenerateRunnable[] mGenerate;
     private int mGenerateCount;
 
     ActivityResultLauncher<Intent> mStartSetup = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -55,8 +57,13 @@ public class MainBinary extends AppCompatActivity {
     Handler mGenerateHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message pMessage) {
-            if (pMessage.what == GenerateRunnable.cGenerateFinished){
-                sStartGame();
+            if (mGenerateRunning){
+                if (pMessage.what == GenerateRunnable.cGenerateFinished){
+                    mGenerateRunning = false;
+                    mGame.xNewGame((BinaryGenerator)pMessage.obj);
+                    sStartGame();
+                    sStopGenerate();
+                }
             }
             return true;
         }
@@ -133,6 +140,8 @@ public class MainBinary extends AppCompatActivity {
         mGame = new BinaryGame();
         mHeader = "";
         mGenerateCount = -1;
+        mGenerateRunning = false;
+        mGenerate = new GenerateRunnable[3];
         mBnrView = mBinding.bvMain;
         mBnrView.setGame(mGame);
         mBnrView.setIntBinaryView(new BinaryView.intBinaryView() {
@@ -161,6 +170,7 @@ public class MainBinary extends AppCompatActivity {
         int lRows;
         int lColumns;
         int lDifficulty;
+        int lIndex;
 
         super.onResume();
 
@@ -180,8 +190,12 @@ public class MainBinary extends AppCompatActivity {
             if (lDifficulty < 0){
                 sSetupStart(lRows, lColumns);
             } else {
-                mGenerate = new GenerateRunnable(mGenerateHandler, mGame, lRows, lColumns, lDifficulty);
-                BinaryApp.getInstance().xExecutor.execute(mGenerate);
+                mGame.xStartGenerate();
+                mGenerateRunning = true;
+                for (lIndex = 0; lIndex < mGenerate.length; lIndex++){
+                    mGenerate[lIndex] = new GenerateRunnable(mGenerateHandler, lRows, lColumns, lDifficulty);
+                    BinaryApp.getInstance().xExecutor.execute(mGenerate[lIndex]);
+                }
             }
         }
     }
@@ -198,7 +212,7 @@ public class MainBinary extends AppCompatActivity {
 
     @Override
     protected void onStop(){
-        mGame.xGenerateStop();
+        sStopGenerate();
         mGame.xSaveGame();
         super.onStop();
     }
@@ -261,6 +275,15 @@ public class MainBinary extends AppCompatActivity {
         return true;
     }
 
+    private void sStopGenerate(){
+        int lIndex;
+
+        for (lIndex = 0; lIndex < mGenerate.length; lIndex++){
+            if (mGenerate[lIndex] != null){
+                mGenerate [lIndex].xStop();
+            }
+        }
+    }
     private void sSetHeader() {
         if (mGame.xGameStatus() == BinaryGame.cStatusPlay || mGame.xGameStatus() == BinaryGame.cStatusSolved) {
             switch (mGame.xDifficulty()) {
@@ -317,7 +340,7 @@ public class MainBinary extends AppCompatActivity {
         Intent lInt;
         Bundle lBundle;
 
-        mGame.xGenerateStop();
+        sStopGenerate();
         lBundle = new Bundle();
         lBundle.putInt(SelectGameParams.cRows, mGame.xRows());
         lBundle.putInt(SelectGameParams.cColumns, mGame.xColumns());
@@ -332,7 +355,7 @@ public class MainBinary extends AppCompatActivity {
         Intent lInt;
         Bundle lBundle;
 
-        mGame.xGenerateStop();
+        sStopGenerate();
         lBundle = new Bundle();
         lBundle.putInt(SelectGameParams.cRows, mGame.xRows());
         lBundle.putInt(SelectGameParams.cColumns, mGame.xColumns());

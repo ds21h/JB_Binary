@@ -1,28 +1,37 @@
 package jb.games.binary.game;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Random;
 
-class BinaryGenerator {
-    private int mRows;
-    private int mColumns;
-    private int mNumberCells;
-    private int mDifficulty;
-    private List<Integer> mFreeCells;
-    private ValueCell[] mCells;
-    private Random mRandom;
+public class BinaryGenerator {
+    private final int mRows;
+    private final int mColumns;
+    private final int mNumberCells;
+    private final int mDifficulty;
+    private final int[] mFrCells;
+    private int mTopFree;
+    private final ValueCell[] mCells;
+    private final Random mRandom;
     private volatile boolean mStop;
-    private int[] cMinFraction = {50, 40, 30, 20, 10};
-    private int mMinCells;
+    private final int[] cMinFraction = {50, 40, 30, 20, 10};
+    private final int mMinCells;
+    private final ValueCell[] mTestRow;
+    private final ValueCell[] mTestColumn;
 
-    BinaryGenerator(int pRows, int pColumns, int pDifficulty){
+    int xRows(){
+        return mRows;
+    }
+
+    int xColumns(){
+        return mColumns;
+    }
+
+    int xDifficulty(){
+        return mDifficulty;
+    }
+
+    public BinaryGenerator(int pRows, int pColumns, int pDifficulty){
         mRows = pRows;
         mColumns = pColumns;
         if (pDifficulty < 1){
@@ -36,13 +45,16 @@ class BinaryGenerator {
         }
         mNumberCells = mRows * mColumns;
         mMinCells = (mNumberCells * cMinFraction[mDifficulty - 1])/100;
-        mFreeCells = new ArrayList<>();
+        mFrCells = new int[mNumberCells];
+        mTopFree = -1;
         mCells = new ValueCell[mNumberCells];
         mRandom = new Random();
         mStop = false;
+        mTestRow = new ValueCell[mColumns];
+        mTestColumn = new ValueCell[mRows];
     }
 
-    void xStop(){
+    public void xStop(){
         mStop = true;
     }
 
@@ -50,10 +62,9 @@ class BinaryGenerator {
         return mCells;
     }
 
-    boolean xGenerate(){
+    public boolean xGenerate(){
         boolean lResult;
 
-        lResult = false;
         sInit();
         lResult = sMakeBase();
         if (lResult) {
@@ -68,11 +79,11 @@ class BinaryGenerator {
     private void sInit(){
         int lCount;
 
-        mFreeCells.clear();
         for (lCount = 0; lCount < mNumberCells; lCount++){
-            mFreeCells.add(lCount);
+            mFrCells[lCount] = lCount;
             mCells[lCount] = new ValueCell();
         }
+        mTopFree = mNumberCells - 1;
     }
 
     private boolean sMakeBase(){
@@ -144,14 +155,17 @@ class BinaryGenerator {
         if (mStop){
             return false;
         }
-        if (mFreeCells.size() > 0){
+        if (mTopFree >= 0){
             lResult = false;
-            lRandom = mRandom.nextInt(mFreeCells.size());
-            lCellNr = mFreeCells.get(lRandom);
-            mFreeCells.remove(lRandom);
+            lRandom = mRandom.nextInt(mTopFree + 1);
+            lCellNr = mFrCells[lRandom];
+            if (lRandom < mTopFree){
+                mFrCells [lRandom] = mFrCells[mTopFree];
+            }
+            mTopFree--;
             lRow = lCellNr / mColumns;
             lColumn = lCellNr % mColumns;
-            if (mRandom.nextBoolean()){
+            if ((lRandom & 0x01) == 0){
                 mCells[lCellNr].xValue(1);
             } else {
                 mCells[lCellNr].xValue(0);
@@ -175,7 +189,8 @@ class BinaryGenerator {
             }
             if (!lResult){
                 mCells[lCellNr] = new ValueCell();
-                mFreeCells.add(lCellNr);
+                mTopFree++;
+                mFrCells[mTopFree] = lCellNr;
             }
         } else {
             lResult = true;
@@ -188,17 +203,15 @@ class BinaryGenerator {
     }
 
     private boolean sCheckRow(ValueCell[] pCells, int pRow) {
-        ValueCell[] lCells;
         int lCount;
         int lCellNr;
 
-        lCells = new ValueCell[mColumns];
         lCellNr = pRow * mColumns;
-        for (lCount = 0; lCount < lCells.length; lCount++){
-            lCells[lCount] = pCells[lCellNr];
+        for (lCount = 0; lCount < mColumns; lCount++){
+            mTestRow[lCount] = pCells[lCellNr];
             lCellNr++;
         }
-        return sCheckUnit(lCells);
+        return sCheckUnit(mTestRow);
     }
 
     private boolean sCheckColumn(int pColumn){
@@ -206,21 +219,19 @@ class BinaryGenerator {
     }
 
     private boolean sCheckColumn(ValueCell[] pCells, int pColumn){
-        ValueCell[] lCells;
         int lCount;
         int lCellNr;
 
-        lCells = new ValueCell[mRows];
         lCellNr = pColumn;
-        for (lCount = 0; lCount < lCells.length; lCount++){
-            lCells[lCount] = pCells[lCellNr];
+        for (lCount = 0; lCount < mRows; lCount++){
+            mTestColumn[lCount] = pCells[lCellNr];
             lCellNr += mColumns;
         }
-        return sCheckUnit(lCells);
+        return sCheckUnit(mTestColumn);
     }
 
     private int sCountSolutions(){
-        int lResult = 0;
+        int lResult;
         ValueCell[] lCells;
         int lCount;
 

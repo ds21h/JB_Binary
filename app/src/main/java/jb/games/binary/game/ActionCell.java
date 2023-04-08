@@ -1,8 +1,8 @@
 package jb.games.binary.game;
 
 class ActionCell {
-    private int mCellNr;
-    private ValueCell mCell;
+    private final int mCellNr;
+    private final ValueCell mCell;
 
     ActionCell(int pCellNr, ValueCell pCell){
         mCellNr = pCellNr;

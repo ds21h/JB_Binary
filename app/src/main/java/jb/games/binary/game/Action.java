@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Action {
-    private int mSelection;
-    private int mFilledCells;
-    private List<ActionCell> mCells;
+    private final int mSelection;
+    private final int mFilledCells;
+    private final List<ActionCell> mCells;
 
     Action(int pSelection, int pFilledCells){
         mSelection = pSelection;

@@ -87,7 +87,7 @@ public class BinaryGame extends BinaryGameBase {
         int lNewId;
         PlayField lField;
 
-        sSaveCurrentPlayfield();
+        sSaveCurrentPlayField();
         lNewId = mPlayFields.get(mPlayFields.size() - 1).xFieldId() + 1;
         lField = new PlayField(lNewId, xPlayField());
         mPlayFields.add(lField);
@@ -96,7 +96,7 @@ public class BinaryGame extends BinaryGameBase {
 
     public void xSwitchPlayField(int pNewId){
         if (xPlayField().xFieldId() != pNewId){
-            sSaveCurrentPlayfield();
+            sSaveCurrentPlayField();
             for (PlayField lField : mPlayFields){
                 if (lField.xFieldId() == pNewId){
                     xPlayField(lField);
@@ -106,25 +106,26 @@ public class BinaryGame extends BinaryGameBase {
         }
     }
 
-    private void sSaveCurrentPlayfield(){
-        SavePlayfield lSavePlayfield;
+    private void sSaveCurrentPlayField(){
+        SavePlayField lSavePlayField;
 
-        lSavePlayfield = new SavePlayfield(xPlayField());
-        BinaryApp.getInstance().xExecutor.execute(lSavePlayfield);
+        lSavePlayField = new SavePlayField(xPlayField());
+        BinaryApp.getInstance().xExecutor.execute(lSavePlayField);
     }
 
     private void sDeleteSaveGame(){
-        SavePlayfield lSavePlayfield;
+        DeleteSaveGame lDeleteSaveGame;
 
-        lSavePlayfield = new SavePlayfield(xPlayField());
-        BinaryApp.getInstance().xExecutor.execute(lSavePlayfield);
+        lDeleteSaveGame = new DeleteSaveGame();
+
+        BinaryApp.getInstance().xExecutor.execute(lDeleteSaveGame);
     }
 
-    private void sDeletePlayField(int pPlayfieldId){
-        DeletePlayfield lDeletePlayfield;
+    private void sDeletePlayField(int pPlayFieldId){
+        DeletePlayField lDeletePlayField;
 
-        lDeletePlayfield = new DeletePlayfield(pPlayfieldId);
-        BinaryApp.getInstance().xExecutor.execute(lDeletePlayfield);
+        lDeletePlayField = new DeletePlayField(pPlayFieldId);
+        BinaryApp.getInstance().xExecutor.execute(lDeletePlayField);
     }
 
     public void xDeleteCurrentPlayField(){
@@ -152,15 +153,10 @@ public class BinaryGame extends BinaryGameBase {
         mPlayFields.add(xPlayField());
     }
 
-    public boolean xGenerate(int pRows, int pColumns, int pDifficulty){
-        boolean lResult;
-
-        lResult = super.xGenerate(pRows, pColumns, pDifficulty);
-        if (lResult){
-            sDeleteSaveGame();
-            mPlayFields.clear();
-            mPlayFields.add(xPlayField());
-        }
-        return lResult;
+    public void xNewGame(BinaryGenerator pGenerator){
+        super.xNewGame(pGenerator);
+        sDeleteSaveGame();
+        mPlayFields.clear();
+        mPlayFields.add(xPlayField());
     }
 }

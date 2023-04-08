@@ -38,22 +38,22 @@ public class BinaryView extends View {
 
     private BinaryGame mGame = null;
     private float mCellSize;
-    private float mButtonSize = 180;
-    private RectF[] mButton = new RectF[2];
-    private boolean mEnabled = true;
+    private final float mButtonSize = 180;
+    private final RectF[] mButton = new RectF[2];
+    private final boolean mEnabled = true;
     private boolean mButtonsEnabled = false;
-    private final Context mContext;
+//    private final Context mContext;
 
     private intBinaryView mIntView = null;
 
     public BinaryView(Context pContext) {
         super(pContext);
-        mContext = pContext;
+//        mContext = pContext;
     }
 
     public BinaryView(Context pContext, AttributeSet pAttrSet) {
         super(pContext, pAttrSet);
-        mContext = pContext;
+//        mContext = pContext;
     }
 
     public void setGame(BinaryGame pGame) {
